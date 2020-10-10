@@ -11,6 +11,7 @@ import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
 import requests
+from datetime import datetime
 
 class LogPlaylist:
     def __init__(self, playlist_id):
@@ -77,23 +78,25 @@ class LogPlaylist:
 
     def store_titles(self):
         """ Store video titles in .txt file """
-        log = open("log.txt", "w", encoding="utf-8")
-        str_log = "[DATE HERE]\n"
+        self.get_playlist_titles()
+
+        # Create file if not existing
+        # f = open("log.txt", "w+", encoding="utf-8")
+        # f.close()
+
+        str_log = "Logged at: " + str(datetime.now()) + "\n\n"
         for video in self.videos:
-            str_log += str(video) + " " + str(self.videos[video]) + "\n"
-        log.write(str_log)
-        log.close()
+            str_log += str(video) + " " + str(self.videos[video]) +"\n"
+        str_log += "\n*******************************************************************************\n\n"
+        with open("log.txt", "r", encoding="utf-8") as contents:
+            save = contents.read()
+        with open("log.txt", "w", encoding="utf-8") as contents:
+            contents.write(str_log)
+        with open("log.txt", "a", encoding="utf-8") as contents:
+            contents.write(save)
+        # log.write(str_log)
+        # log.close()
 
 if __name__ == '__main__':
     lp = LogPlaylist("PLPKBNgKUrDv5VaWps6FHMGtxevOToWQQa")
-    lp.get_playlist_titles()
-    print(lp.videos)
     lp.store_titles()
-
-    # test = {1:'a',2:'b',3:'c'}
-    # file = open("test.txt", "w", encoding="utf-8")
-    # str_log = "ルシカ"
-    # for num in test:
-    #     str_log += str(num) + " " + str(test[num])
-    # file.write(str_log)
-    # file.close()
